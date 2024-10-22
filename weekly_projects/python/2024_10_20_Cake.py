@@ -1,7 +1,5 @@
 # Draw cakes to the terminal, simple programe without inputs
 
-
-
 # constants
 # f"\033[38;2;{};{};{}m"
 # f"\033[48;2;{};{};{}m"
@@ -18,42 +16,46 @@ BG_COLOURS = {
     "dark_red": f"\033[48;2;{172};{50};{50}m"
 }
 
-
-# layer functions
-
+# layer function
 def sponge_layer(width, height, col, char):
     sponge = []
-    sponge.append(col)
+    unit = char + char
+    half_unit = char
 
     for j in range(height):
         row = []
         for i in range(width):
-            row.append(char)
+            row.append(col)
+            row.append(unit)
+            row.append(BG_COLOURS["default"])
+
             if i == width - 1 and j != height - 1:
                 row.append('\n')
 
-        if j != height - 1:
-            sponge.append('\n')
-        
         sponge.append(''.join(row))
-
-    sponge.append(BG_COLOURS["default"])
+    
     print(''.join(sponge))
 
 
 def main():
-    print("\nworking\n")
 
-    sponge_layer(20, 2, BG_COLOURS["cream_brown"], '.') # test
+    # sponge_layer(unit_width, unit_height, colour, )
+    # 1 unit = 2 spaces
+    # half a unit = 1 space
+    sponge_layer(1, 1, BG_COLOURS["cream_brown"], '..') # test
+    sponge_layer(1, 1, BG_COLOURS["cream"], '.') # test
+    sponge_layer(1, 1, BG_COLOURS["dark_red"], '..') # test
+    print()
 
-    sponge_layer(10, 1, CHAR_COLOURS["white"], '@') # test
-    sponge_layer(10, 1, CHAR_COLOURS["dark_red"], '@') # test
-    sponge_layer(10, 1, CHAR_COLOURS["light_red"], '@') # test
-
-    sponge_layer(10, 1, BG_COLOURS["cream_brown"], ' ') # test
-    sponge_layer(10, 1, BG_COLOURS["cream"], ' ') # test
-    sponge_layer(10, 1, BG_COLOURS["dark_red"], ' ') # test
-
+    iceing = 1
+    sponge = 2
+    jam = 1
+    cream = 1
+    sponge_layer(21, iceing, CHAR_COLOURS["white"], '_')
+    sponge_layer(20, sponge, BG_COLOURS["cream_brown"], ' ') # test
+    sponge_layer(19, jam, BG_COLOURS["dark_red"], ' ') # test
+    sponge_layer(19, cream, BG_COLOURS["cream"], ' ') # test
+    sponge_layer(20, sponge, BG_COLOURS["cream_brown"], ' ') # test
 
 
 
