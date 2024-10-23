@@ -27,7 +27,7 @@ CHAR_COLOURS = {
 }
 BG_COLOURS = {
     "default": f"\033[49m", 
-#    "cream_brown": f"\033[48;2;{238};{195};{154}m",
+    "cream_brown": f"\033[48;2;{238};{195};{154}m",
 #    "cream": f"\033[48;2;{251};{245};{225}m",
     "orange": f"\033[48;2;{220};{129};{39}m"
 #    "dark_red": f"\033[48;2;{172};{50};{50}m"
@@ -37,7 +37,6 @@ BG_COLOURS = {
 
 # One unit    = 2 chars
 # Half a unit = 1 char
-
 class Fishcake:
     def __init__(self, unit_width):
         self.width = unit_width - 1
@@ -54,6 +53,72 @@ class Fishcake:
         cake.append("".join(end_cake))
 
         print("".join(cake))
+
+#   ---- parent/child classes ----
+class Cake():
+    def __init__(self, cake_name, unit_width, layers=1):
+        self.name = cake_name
+        self.__all_cake_rows = []
+
+        self.__width = unit_width
+        self.__layers = layers
+    # Note: when __sponge(), __filling(), __layers() and any other row building function that completes the row is to be placed into __all_cake_rows
+    #       If the row is not yet fully complete, for example if an icing drip is still to be applied to the row, it is not to be placed into the __all_cake_rows array untill the drip is added
+
+    # all_cake_rows = [
+    #   (call __sponge)   [[sponge row 1], [sponge row 2], [sponge row 3]],                  
+    #   (call __layers)   [[layer 1 filling 1], [layer 1 filling 2], [layer 1 sponge row 1], [layer 1sponge row 2], [layer 1sponge row 3]]
+    #                 ]
+
+    #       -- example of desiered construct_cake array argument structure --
+    #                               all_cake_rows = [
+    #   (call __sponge(width=5, height=2))              [
+    #                                                       [f"BG_COLOURS["cream_brown"]", '..', '..', '..', '..', '..', f"BG_COLOURS["default"]"],
+    #                                                       [f"BG_COLOURS["cream_brown"]", '..', '..', '..', '..', '..', f"BG_COLOURS["default"]"]
+    #                                                   ]                  
+    #   (call __layers(num_of_layers=1))                [
+    #                                                       [f"BG_COLOURS["dark_red"]", ' ', '..', '..', '..', '..', f"BG_COLOURS["default"]"], 
+    #                                                       [f"BG_COLOURS["cream"]", ' ', '..', '..', '..', '..', f"BG_COLOURS["default"]"], 
+    #                                                       [f"BG_COLOURS["cream_brown"]", '..', '..', '..', '..', '..', f"BG_COLOURS["default"]"],
+    #                                                       [f"BG_COLOURS["cream_brown"]", '..', '..', '..', '..', '..', f"BG_COLOURS["default"]"]
+    #                                                   ]
+    #                                               ]
+
+    def __sponge(self, height=2, col=BG_COLOURS["cream_brown"]):    # returns 'sponge' array. Uses self.width to create row arrays that are added to sponge array. Hight determins the number of rows in the sponge array.
+        # example of return, 
+        #   height = 3    sponge = [[row 1], [row 2], [row 3]]
+        #   height = 1    sponge = [[row 1]]
+        pass
+    
+    def __filling(self, col):                                       # returns one layer of 'filling' array. Hight is 1. Width is self.width - 1 (unit). The filling row should begin with a space (half unit).
+        # Note: The row structure will be the same as Sponge array structure
+        # to keep everything consistent for the rows.
+        # This will help later when I need to use "\n".join(array) to add the new lines between each row
+
+        # example of return,
+        #   width = 3   filling_width = width - 1 (2)   filling = [[' ', '..', '..']] # dots represent coloured space
+        #   width = 5   filling_width = width - 1 (4)   filling = [[' ', '..', '..', '..', '..']] # dots represent coloured space
+        pass
+
+    def __layers(self, num_of_layers=1):                            # returns 'layers' array of rows. Calls __filling and __sponge in a loop set to num_of_layers
+        # Note: Because __sponge() and __filling() return arrays within an array, the return array will need each item to be individually copied into it
+
+        # example of return
+        #   num_of_layers = 1   layers = [[layer 1 filling 1], [layer 1 filling 2], [layer 1 sponge 1]]
+        #   num_of_layers = 3   layers = [[layer 1 filling 1], [layer 1 sponge 1], [layer 2 filling 1], [layer 2 sponge 1], [layer 3 filling 1], [layer 3 sponge 1]]
+        pass
+
+    def construct_cake(self):                                       # returns 'cake_str' string. calls __sponge and __layers to build the rows, converting all rows into individual strings
+        
+        pass
+
+    def convert_to_string(self):                                    # returns a single string. uses the self.__all_cake_rows array, converting each row into a string and adding the row to an array. Then joining the array using '\n' as the joiner
+        pass
+
+    def print_cake(self, cake_string):                              # takes the return from convert_to_string as the argument. Prints the name of the cake (self.name) and the cake_string with an empty row above and bellow the cake name
+        pass
+
+
 
 
 # ----- prototype -----
