@@ -40,7 +40,7 @@ BG_COLOURS = {
 
 class Fishcake:
     def __init__(self, unit_width):
-        self.width = unit_width
+        self.width = unit_width - 1
     
     def print_cake(self):
         start_cake = [CHAR_COLOURS["orange"], '(']
@@ -84,6 +84,12 @@ def main():
     print()
 
     fishcake = Fishcake(5)
+    fishcake.print_cake()
+
+    fishcake = Fishcake(3)
+    fishcake.print_cake()
+
+    fishcake = Fishcake(1)
     fishcake.print_cake()
 
     # sponge_layer(unit_width, unit_height, colour, )
