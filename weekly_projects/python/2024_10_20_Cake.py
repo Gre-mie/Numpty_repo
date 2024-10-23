@@ -33,12 +33,25 @@ BG_COLOURS = {
 #    "dark_red": f"\033[48;2;{172};{50};{50}m"
 }
 
+ERROR_COLOURS = {
+    "red": f"\033[31m",
+    "grey": f"\033[22;30m"
+}
+
+ERROR_MESSAGES = {
+    "less than 3": [ERROR_COLOURS["red"], "The cake is so small, it cant be seen by the naked eye!\n", ERROR_COLOURS["grey"], "All cakes must be at least 3 units in width", CHAR_COLOURS["default"], '\n']
+}
+
 # ----- class definitions -----
 
 # One unit    = 2 chars
 # Half a unit = 1 char
 class Fishcake:
-    def __init__(self, unit_width):
+    def __init__(self, unit_width, cake_name="fishcake"):
+        if unit_width < 3:
+            raise ValueError("".join(ERROR_MESSAGES["less than 3"]))
+
+        self.name = cake_name
         self.width = unit_width - 1
     
     def print_cake(self):
@@ -53,10 +66,15 @@ class Fishcake:
         cake.append("".join(end_cake))
 
         print("".join(cake))
+    
+#--------------------------------------------------------------------------------------------------------------------------------
 
 #   ---- parent/child classes ----
 class Cake():
-    def __init__(self, cake_name, unit_width, layers=1):
+    def __init__(self, unit_width, cake_name, layers=1):
+        if unit_width < 3:
+            raise ValueError("".join(ERROR_MESSAGES["less than 3"]))
+
         self.name = cake_name
         self.__all_cake_rows = []
 
@@ -115,7 +133,8 @@ class Cake():
     def convert_to_string(self):                                    # returns a single string. uses the self.__all_cake_rows array, converting each row into a string and adding the row to an array. Then joining the array using '\n' as the joiner
         pass
 
-    def print_cake(self, cake_string):                              # takes the return from convert_to_string as the argument. Prints the name of the cake (self.name) and the cake_string with an empty row above and bellow the cake name
+    def print_cake(self, cake_string="TESTING the string\n"):                              # takes the return from convert_to_string as the argument. Prints the name of the cake (self.name) and the cake_string with an empty row above and bellow the cake name
+        print(cake_string)
         pass
 
 
@@ -145,17 +164,29 @@ class Cake():
 
 # ----- global functions -----
 
+def make_cake(cake_class_name, cake_unit_width, cake_name="Unamed Cake"):
+    try:
+        Cake_class = globals()[cake_class_name] # turns a normal string into a class name
+        cake = Cake_class(cake_unit_width, cake_name)
+        cake.print_cake()
+    except ValueError as error_message:
+        print(error_message)
+
+
 def main():
     print()
 
-    fishcake = Fishcake(5)
-    fishcake.print_cake()
+    make_cake("Fishcake", 5)
+    make_cake("Fishcake", 3)
+    make_cake("Fishcake", 1)
+    make_cake("Fishcake", 15)
+    make_cake("Fishcake", 20)
 
-    fishcake = Fishcake(3)
-    fishcake.print_cake()
+    make_cake("Cake", 4)
+    make_cake("Cake", 3)
+    make_cake("Cake", -400)
+    make_cake("Cake", 20)
 
-    fishcake = Fishcake(1)
-    fishcake.print_cake()
 
     # sponge_layer(unit_width, unit_height, colour, )
     # 1 unit = 2 spaces
