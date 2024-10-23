@@ -39,7 +39,7 @@ ERROR_COLOURS = {
 }
 
 ERROR_MESSAGES = {
-    "less than 3": [ERROR_COLOURS["red"], "The cake is so small, it cant be seen by the naked eye!\n", ERROR_COLOURS["grey"], "All cakes must be at least 3 units in width", CHAR_COLOURS["default"], '\n']
+    "less than 3": [ERROR_COLOURS["red"], "The cake is so small, it cant be seen by the naked eye!\n", ERROR_COLOURS["grey"], "Cakes must be at least 3 units in width", CHAR_COLOURS["default"], '\n']
 }
 
 # ----- class definitions -----
@@ -47,24 +47,26 @@ ERROR_MESSAGES = {
 # One unit    = 2 chars
 # Half a unit = 1 char
 class Fishcake:
-    def __init__(self, unit_width, cake_name="fishcake"):
-        if unit_width < 3:
-            raise ValueError("".join(ERROR_MESSAGES["less than 3"]))
-
+    def __init__(self, unit_width, cake_name):
         self.name = cake_name
-        self.width = unit_width - 1
+        self.__width = unit_width - 1
+
+        if unit_width < 3:  # unit_width is used due to it being the full width of the cake
+            print(self.name)
+            raise ValueError("".join(ERROR_MESSAGES["less than 3"]))
     
     def print_cake(self):
         start_cake = [CHAR_COLOURS["orange"], '(']
         end_cake = [')', CHAR_COLOURS["default"], '\n']
         cake = start_cake
 
-        for _ in range(self.width):
+        for _ in range(self.__width):
             cake.append(BG_COLOURS["orange"])
             cake.append("  ")
             cake.append(BG_COLOURS["default"])
         cake.append("".join(end_cake))
 
+        print(self.name)
         print("".join(cake))
     
 #--------------------------------------------------------------------------------------------------------------------------------
@@ -72,14 +74,16 @@ class Fishcake:
 #   ---- parent/child classes ----
 class Cake():
     def __init__(self, unit_width, cake_name, layers=1):
-        if unit_width < 3:
-            raise ValueError("".join(ERROR_MESSAGES["less than 3"]))
-
         self.name = cake_name
         self.__all_cake_rows = []
 
         self.__width = unit_width
         self.__layers = layers
+
+        if unit_width < 3:
+            print(self.name)
+            raise ValueError("".join(ERROR_MESSAGES["less than 3"]))
+
     # Note: when __sponge(), __filling(), __layers() and any other row building function that completes the row is to be placed into __all_cake_rows
     #       If the row is not yet fully complete, for example if an icing drip is still to be applied to the row, it is not to be placed into the __all_cake_rows array untill the drip is added
 
@@ -133,7 +137,8 @@ class Cake():
     def convert_to_string(self):                                    # returns a single string. uses the self.__all_cake_rows array, converting each row into a string and adding the row to an array. Then joining the array using '\n' as the joiner
         pass
 
-    def print_cake(self, cake_string="TESTING the string\n"):                              # takes the return from convert_to_string as the argument. Prints the name of the cake (self.name) and the cake_string with an empty row above and bellow the cake name
+    def print_cake(self, cake_string="TESTING the string\n"):                              # takes the return from convert_to_string as the argument. Prints the name of the cake (self.name) and the cake_string
+        print(self.name)
         print(cake_string)
         pass
 
@@ -172,19 +177,17 @@ def make_cake(cake_class_name, cake_unit_width, cake_name="Unamed Cake"):
     except ValueError as error_message:
         print(error_message)
 
-
 def main():
     print()
 
-    make_cake("Fishcake", 5)
+    make_cake("Fishcake", 5, "Fishie Mac Fish-face")
     make_cake("Fishcake", 3)
     make_cake("Fishcake", 1)
-    make_cake("Fishcake", 15)
-    make_cake("Fishcake", 20)
+    make_cake("Fishcake", 20, "Table-top")
 
-    make_cake("Cake", 4)
-    make_cake("Cake", 3)
-    make_cake("Cake", -400)
+    make_cake("Cake", 4, "Basic cake")
+    make_cake("Cake", 3, "Sadly small")
+    make_cake("Cake", -400, "400 Bytes")
     make_cake("Cake", 20)
 
 
