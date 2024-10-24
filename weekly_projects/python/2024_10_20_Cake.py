@@ -81,7 +81,21 @@ class Fishcake:
 class Cake():
     def __init__(self, unit_width, cake_name, layers=1):
         self.name = cake_name
-        self.all_cake_rows = []
+        self.all_cake_rows = [
+                [
+                    ['test ', 'layer s ', '1, ',  'row ', '1'], 
+                    ['test ', 'layer s ', '1, ',  'row ', '2'],
+                    ['test ', 'layer s ', '1, ',  'row ', '3']
+                ],
+                [
+                    ['test ', 'layer f ', '2, ',  'row ', '1']
+                ],
+                [
+                    ['test ', 'layer s ', '3, ',  'row ', '1'],
+                    ['test ', 'layer s ', '3, ',  'row ', '2'],
+                    ['test ', 'layer s ', '3, ',  'row ', '3']
+                ]
+            ] # testing ---- self.all_cake_rows should be an empty array
 
         self.width = unit_width
         self.layers = layers
@@ -142,7 +156,13 @@ class Cake():
         pass
 
     def convert_to_string(self):                                    # returns a single string. uses the self.__all_cake_rows array, converting each row into a string and adds the row to a temp array. Then joining the array using '\n' as the joiner
-        return "Working" # test
+        str_row_array = []
+
+        for cake_area in self.all_cake_rows:
+            for row in cake_area:
+                str_row_array.append("".join(row))
+        return "\n".join(str_row_array)
+        
 
     def print_cake(self, cake_string):                              # takes the return from convert_to_string as the argument. Prints the name of the cake (self.name) and the cake_string
         print(self.name)
