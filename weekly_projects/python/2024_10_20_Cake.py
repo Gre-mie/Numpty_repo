@@ -39,7 +39,7 @@ ERROR_COLOURS = {
 }
 
 ERROR_MESSAGES = {
-    "less than 3": [ERROR_COLOURS["red"], "The cake is so small, it cant be seen by the naked eye!\n", ERROR_COLOURS["grey"], "Cakes must be at least 3 units in width", CHAR_COLOURS["default"], '\n']
+    "less than 3": [ERROR_COLOURS["red"], "The cake is so small, it cant be seen by the naked eye!\n", ERROR_COLOURS["grey"], "Cakes must be at least 3 units in width", CHAR_COLOURS["default"]]
 }
 
 # ----- class definitions -----
@@ -57,7 +57,7 @@ class Fishcake:
     
     def print_cake(self):
         start_cake = [CHAR_COLOURS["orange"], '(']
-        end_cake = [')', CHAR_COLOURS["default"], '\n']
+        end_cake = [')', CHAR_COLOURS["default"]]
         cake = start_cake
 
         for _ in range(self.__width):
@@ -75,10 +75,10 @@ class Fishcake:
 class Cake():
     def __init__(self, unit_width, cake_name, layers=1):
         self.name = cake_name
-        self.__all_cake_rows = []
+        self.all_cake_rows = []
 
-        self.__width = unit_width
-        self.__layers = layers
+        self.width = unit_width
+        self.layers = layers
 
         if unit_width < 3:
             print(self.name)
@@ -137,7 +137,7 @@ class Cake():
     def convert_to_string(self):                                    # returns a single string. uses the self.__all_cake_rows array, converting each row into a string and adding the row to an array. Then joining the array using '\n' as the joiner
         pass
 
-    def print_cake(self, cake_string="TESTING the string\n"):                              # takes the return from convert_to_string as the argument. Prints the name of the cake (self.name) and the cake_string
+    def print_cake(self, cake_string="TESTING the string"):                              # takes the return from convert_to_string as the argument. Prints the name of the cake (self.name) and the cake_string
         print(self.name)
         print(cake_string)
         pass
