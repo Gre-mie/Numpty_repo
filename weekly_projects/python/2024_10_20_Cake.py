@@ -28,9 +28,9 @@ CHAR_COLOURS = {
 BG_COLOURS = {
     "default": f"\033[49m", 
     "cream_brown": f"\033[48;2;{238};{195};{154}m",
-#    "cream": f"\033[48;2;{251};{245};{225}m",
-    "orange": f"\033[48;2;{220};{129};{39}m"
-#    "dark_red": f"\033[48;2;{172};{50};{50}m"
+    "cream": f"\033[48;2;{251};{245};{225}m",
+    "orange": f"\033[48;2;{220};{129};{39}m",
+    "dark_red": f"\033[48;2;{172};{50};{50}m"
 }
 
 ERROR_COLOURS = {
@@ -82,39 +82,15 @@ class Fishcake:
 #   ---- parent/child classes ----
 
 class Cake():
-    def __init__(self, unit_width, cake_name, layers=1):
+    def __init__(self, unit_width, cake_name, layers):
         self.name = cake_name
         self.all_cake_rows = []
-
         self.width = unit_width
-        self.layers = layers
+        self.num_of_layers = layers
 
         if unit_width < 3:
             print(self.name)
             raise ValueError("".join(ERROR_MESSAGES["less than 3"]))
-
-
-    # Note: when __sponge(), __filling(), __layers() and any other row building function that completes the row is to be placed into __all_cake_rows
-    #       If the row is not yet fully complete, for example if an icing drip is still to be applied to the row, it is not to be placed into the __all_cake_rows array untill the drip is added
-
-    # all_cake_rows = [
-    #   (call __sponge)   [[sponge row 1], [sponge row 2], [sponge row 3]],                  
-    #   (call __layers)   [[layer 1 filling 1], [layer 1 filling 2], [layer 1 sponge row 1], [layer 1sponge row 2], [layer 1sponge row 3]]
-    #                 ]
-
-    #       -- example of desiered construct_cake array argument structure --
-    #                               all_cake_rows = [
-    #   (call __sponge(width=5, height=2))              [
-    #                                                       [f"BG_COLOURS["cream_brown"]", '..', '..', '..', '..', '..', f"BG_COLOURS["default"]"],
-    #                                                       [f"BG_COLOURS["cream_brown"]", '..', '..', '..', '..', '..', f"BG_COLOURS["default"]"]
-    #                                                   ]                  
-    #   (call __layers(num_of_layers=1))                [
-    #                                                       [f"BG_COLOURS["dark_red"]", ' ', '..', '..', '..', '..', f"BG_COLOURS["default"]"], 
-    #                                                       [f"BG_COLOURS["cream"]", ' ', '..', '..', '..', '..', f"BG_COLOURS["default"]"], 
-    #                                                       [f"BG_COLOURS["cream_brown"]", '..', '..', '..', '..', '..', f"BG_COLOURS["default"]"],
-    #                                                       [f"BG_COLOURS["cream_brown"]", '..', '..', '..', '..', '..', f"BG_COLOURS["default"]"]
-    #                                                   ]
-    #                                               ]
 
     def sponge(self, height=2, col=BG_COLOURS["cream_brown"]):    # returns 'sponge' array. Uses self.width to create row arrays that are added to sponge array. Hight determins the number of rows in the sponge array.
         sponge = []
@@ -122,75 +98,44 @@ class Cake():
             row = []
             row.append(col)
             for i in range(self.width):
-                row.append(' .')                # test '.', to be removed later
+                row.append('  ')
             row.append(BG_COLOURS["default"])
             sponge.append(row)
         return  sponge
     
-    def filling(self, col):                                       # returns one layer of 'filling' array. Hight is 1. Width is self.width - 1 (unit). The filling row should begin with a space (half unit).
-        # Note: The row structure will be the same as Sponge array structure
-        # to keep everything consistent for the rows.
-        # This will help later when I need to use "\n".join(array) to add the new lines between each row
+    def filling(self, col):                                       # returns one layer of 'filling' array. Hight is 1. Width is self.width - 2 (units). The filling row should begin with a space (half unit).
+        width = self.width - 2
+        row = [' ', col]
+        row.append(' ')
+        for i in range(width):
+            row.append('  ')
+        row.append(' ')
+        row.append(BG_COLOURS["default"])
+        return  row
 
-        # example of return,
-        #   width = 3   filling_width = width - 1 (2)   filling = [[' ', '..', '..']] # dots represent coloured space
-        #   width = 5   filling_width = width - 1 (4)   filling = [[' ', '..', '..', '..', '..']] # dots represent coloured space
-        return  [['f ', 'row ', '1']] # test return
-
-    def layers(self, num_of_layers=1):                            # returns 'layers' array of rows. Calls __filling and __sponge in a loop set to num_of_layers
-        # Note: Because __sponge() and __filling() return arrays within an array, the return array will need each item to be individually copied into it
-
-        # example of return
-        #   num_of_layers = 1   layers = [[layer 1 filling 1], [layer 1 filling 2], [layer 1 sponge 1]]
-        #   num_of_layers = 3   layers = [[layer 1 filling 1], [layer 1 sponge 1], [layer 2 filling 1], [layer 2 sponge 1], [layer 3 filling 1], [layer 3 sponge 1]]
-        
-        #print("\nfilling:", self.filling(BG_COLOURS["cream_brown"])) # test
-        return  [['f ', 'row ', '1'], ['s ', 'row ', '1'], ['s ', 'row ', '2'], ['s ', 'row ', '3']] # test return
+    def layers(self):                                             # returns 'layers' array of rows. Calls __filling and __sponge in a loop set to num_of_layers
+        layers = []
+        for i in range(self.num_of_layers):
+            layers.append(self.filling(BG_COLOURS["dark_red"]))
+            layers.append(self.filling(BG_COLOURS["cream"]))
+            for r in self.sponge(2):
+                layers.append(r)
+        return  layers
 
     def construct_cake(self):                                       # calls __sponge and __layers to build the rows, sends them to all_cake_rows
-        print("Testing construct_cake()")
-        self.all_cake_rows.append(self.sponge(2))
-        
-        #print("\nlayers:", self.layers(1)) # test
-        
+        self.all_cake_rows.append(self.sponge(2))        
+        self.all_cake_rows.append(self.layers())
 
     def convert_to_string(self):                                    # returns a single string. uses the self.__all_cake_rows array, converting each row into a string and adds the row to a temp array. Then joining the array using '\n' as the joiner
         str_row_array = []
-
         for cake_area in self.all_cake_rows:
             for row in cake_area:
                 str_row_array.append("".join(row))
         return "\n".join(str_row_array)
 
-
     def print_cake(self, cake_string):                              # takes the return from convert_to_string as the argument. Prints the name of the cake (self.name) and the cake_string
         print(self.name)
         print(cake_string)
-
-
-
-
-# ----- prototype -----
-
-# layer function
-#def sponge_layer(width, height, col, char):
-#    sponge = []
-#    unit = char + char
-#    half_unit = char # used 
-
-#    for j in range(height):
-#        row = []
-#        for i in range(width):
-#            row.append(col)
-#            row.append(unit)
-#            row.append(BG_COLOURS["default"])
-
-#            if i == width - 1 and j != height - 1:
-#                row.append('\n')
-
-#        sponge.append(''.join(row))
-    
-#    print(''.join(sponge))
 
 # ----- global functions -----
 
@@ -211,38 +156,10 @@ def main():
     print() # new line
 
     # --------------- testing -----------------------
-    make_cake("Cake", 5, "Basic cake")
+    make_cake("Cake", 15, "Basic cake", 1)
     print()
-    make_cake("Cake", 20, "Basic cake")
+    make_cake("Cake", 20, "Basic cake", 2)
 
-
-#make_cake("Fishcake", 7, "Fishcake") # Object class method prototype: print_cake(self) 
-#make_cake("Cake", 20, "Basic cake")  # Object class method prototype: print_cake(self, ) 
-
-
-
-    # sponge_layer(unit_width, unit_height, colour, )
-    # 1 unit = 2 spaces
-    # half a unit = 1 space
-#    sponge_layer(1, 1, BG_COLOURS["cream_brown"], '..') # test
-#    sponge_layer(1, 1, BG_COLOURS["cream"], '.') # test
-#    sponge_layer(1, 1, BG_COLOURS["dark_red"], '..') # test
-#    print()
-
-#    iceing = 1
-#    sponge = 2
-#    jam = 1
-#    cream = 1
-#    sponge_layer(21, iceing, CHAR_COLOURS["white"], '_')
-#    sponge_layer(20, sponge, BG_COLOURS["cream_brown"], ' ') # test
-#    sponge_layer(19, jam, BG_COLOURS["dark_red"], ' ') # test
-#    sponge_layer(19, cream, BG_COLOURS["cream"], ' ') # test
-#    sponge_layer(20, sponge, BG_COLOURS["cream_brown"], ' ') # test
-
-
-
-
-    
 
 
 
