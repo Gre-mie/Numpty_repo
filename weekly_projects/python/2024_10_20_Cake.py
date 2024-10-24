@@ -47,7 +47,7 @@ ERROR_MESSAGES = {
 # One unit    = 2 chars
 # Half a unit = 1 char
 class Fishcake:
-    def __init__(self, unit_width, cake_name):
+    def __init__(self, unit_width, cake_name, layers): # layers added for compatibility with make_cake() function, but is not used in this class
         self.name = cake_name
         self.all_cake_rows = []
 
@@ -77,25 +77,14 @@ class Fishcake:
     
 #--------------------------------------------------------------------------------------------------------------------------------
 
+#   ---- parent classes ----
+
 #   ---- parent/child classes ----
+
 class Cake():
     def __init__(self, unit_width, cake_name, layers=1):
         self.name = cake_name
-        self.all_cake_rows = [
-                [
-                    ['test ', 'layer s ', '1, ',  'row ', '1'], 
-                    ['test ', 'layer s ', '1, ',  'row ', '2'],
-                    ['test ', 'layer s ', '1, ',  'row ', '3']
-                ],
-                [
-                    ['test ', 'layer f ', '2, ',  'row ', '1']
-                ],
-                [
-                    ['test ', 'layer s ', '3, ',  'row ', '1'],
-                    ['test ', 'layer s ', '3, ',  'row ', '2'],
-                    ['test ', 'layer s ', '3, ',  'row ', '3']
-                ]
-            ] # testing ---- self.all_cake_rows should be an empty array
+        self.all_cake_rows = []
 
         self.width = unit_width
         self.layers = layers
@@ -127,13 +116,18 @@ class Cake():
     #                                                   ]
     #                                               ]
 
-    def __sponge(self, height=2, col=BG_COLOURS["cream_brown"]):    # returns 'sponge' array. Uses self.width to create row arrays that are added to sponge array. Hight determins the number of rows in the sponge array.
-        # example of return, 
-        #   height = 3    sponge = [[row 1], [row 2], [row 3]]
-        #   height = 1    sponge = [[row 1]]
-        pass
+    def sponge(self, height=2, col=BG_COLOURS["cream_brown"]):    # returns 'sponge' array. Uses self.width to create row arrays that are added to sponge array. Hight determins the number of rows in the sponge array.
+        sponge = []
+        for j in range(height):
+            row = []
+            row.append(col)
+            for i in range(self.width):
+                row.append(' .')                # test '.', to be removed later
+            row.append(BG_COLOURS["default"])
+            sponge.append(row)
+        return  sponge
     
-    def __filling(self, col):                                       # returns one layer of 'filling' array. Hight is 1. Width is self.width - 1 (unit). The filling row should begin with a space (half unit).
+    def filling(self, col):                                       # returns one layer of 'filling' array. Hight is 1. Width is self.width - 1 (unit). The filling row should begin with a space (half unit).
         # Note: The row structure will be the same as Sponge array structure
         # to keep everything consistent for the rows.
         # This will help later when I need to use "\n".join(array) to add the new lines between each row
@@ -141,19 +135,24 @@ class Cake():
         # example of return,
         #   width = 3   filling_width = width - 1 (2)   filling = [[' ', '..', '..']] # dots represent coloured space
         #   width = 5   filling_width = width - 1 (4)   filling = [[' ', '..', '..', '..', '..']] # dots represent coloured space
-        pass
+        return  [['f ', 'row ', '1']] # test return
 
-    def __layers(self, num_of_layers=1):                            # returns 'layers' array of rows. Calls __filling and __sponge in a loop set to num_of_layers
+    def layers(self, num_of_layers=1):                            # returns 'layers' array of rows. Calls __filling and __sponge in a loop set to num_of_layers
         # Note: Because __sponge() and __filling() return arrays within an array, the return array will need each item to be individually copied into it
 
         # example of return
         #   num_of_layers = 1   layers = [[layer 1 filling 1], [layer 1 filling 2], [layer 1 sponge 1]]
         #   num_of_layers = 3   layers = [[layer 1 filling 1], [layer 1 sponge 1], [layer 2 filling 1], [layer 2 sponge 1], [layer 3 filling 1], [layer 3 sponge 1]]
-        pass
+        
+        #print("\nfilling:", self.filling(BG_COLOURS["cream_brown"])) # test
+        return  [['f ', 'row ', '1'], ['s ', 'row ', '1'], ['s ', 'row ', '2'], ['s ', 'row ', '3']] # test return
 
     def construct_cake(self):                                       # calls __sponge and __layers to build the rows, sends them to all_cake_rows
+        print("Testing construct_cake()")
+        self.all_cake_rows.append(self.sponge(2))
         
-        pass
+        #print("\nlayers:", self.layers(1)) # test
+        
 
     def convert_to_string(self):                                    # returns a single string. uses the self.__all_cake_rows array, converting each row into a string and adds the row to a temp array. Then joining the array using '\n' as the joiner
         str_row_array = []
@@ -162,7 +161,7 @@ class Cake():
             for row in cake_area:
                 str_row_array.append("".join(row))
         return "\n".join(str_row_array)
-        
+
 
     def print_cake(self, cake_string):                              # takes the return from convert_to_string as the argument. Prints the name of the cake (self.name) and the cake_string
         print(self.name)
@@ -195,10 +194,11 @@ class Cake():
 
 # ----- global functions -----
 
-def make_cake(cake_class_name, cake_unit_width, cake_name="Unamed Cake"):
+def make_cake(cake_class_name, cake_unit_width, cake_name="Unamed Cake", layers=None):
     try:
         Cake_class = globals()[cake_class_name] # turns a normal string into a class name
-        cake = Cake_class(cake_unit_width, cake_name)
+        cake = Cake_class(cake_unit_width, cake_name, layers)
+        cake.construct_cake()
         cake.print_cake(cake.convert_to_string())
     except ValueError as error_message:
         print(error_message)
@@ -211,6 +211,8 @@ def main():
     print() # new line
 
     # --------------- testing -----------------------
+    make_cake("Cake", 5, "Basic cake")
+    print()
     make_cake("Cake", 20, "Basic cake")
 
 
