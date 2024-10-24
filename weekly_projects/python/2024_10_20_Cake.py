@@ -49,25 +49,31 @@ ERROR_MESSAGES = {
 class Fishcake:
     def __init__(self, unit_width, cake_name):
         self.name = cake_name
+        self.all_cake_rows = []
+
         self.__width = unit_width - 1
 
         if unit_width < 3:  # unit_width is used due to it being the full width of the cake
             print(self.name)
             raise ValueError("".join(ERROR_MESSAGES["less than 3"]))
-    
-    def print_cake(self):
-        start_cake = [CHAR_COLOURS["orange"], '(']
+
+    def construct_cake(self):
+        self.all_cake_rows = [CHAR_COLOURS["orange"], '(']
         end_cake = [')', CHAR_COLOURS["default"]]
-        cake = start_cake
 
         for _ in range(self.__width):
-            cake.append(BG_COLOURS["orange"])
-            cake.append("  ")
-            cake.append(BG_COLOURS["default"])
-        cake.append("".join(end_cake))
+            self.all_cake_rows.append(BG_COLOURS["orange"])
+            self.all_cake_rows.append("  ")
+            self.all_cake_rows.append(BG_COLOURS["default"])
+        self.all_cake_rows.append("".join(end_cake))
 
+    def convert_to_string(self):
+        self.construct_cake()
+        return "".join(self.all_cake_rows)
+
+    def print_cake(self, cake_string):
         print(self.name)
-        print("".join(cake))
+        print(cake_string)
     
 #--------------------------------------------------------------------------------------------------------------------------------
 
@@ -83,6 +89,7 @@ class Cake():
         if unit_width < 3:
             print(self.name)
             raise ValueError("".join(ERROR_MESSAGES["less than 3"]))
+
 
     # Note: when __sponge(), __filling(), __layers() and any other row building function that completes the row is to be placed into __all_cake_rows
     #       If the row is not yet fully complete, for example if an icing drip is still to be applied to the row, it is not to be placed into the __all_cake_rows array untill the drip is added
@@ -130,17 +137,16 @@ class Cake():
         #   num_of_layers = 3   layers = [[layer 1 filling 1], [layer 1 sponge 1], [layer 2 filling 1], [layer 2 sponge 1], [layer 3 filling 1], [layer 3 sponge 1]]
         pass
 
-    def construct_cake(self):                                       # returns 'cake_str' string. calls __sponge and __layers to build the rows, converting all rows into individual strings
+    def construct_cake(self):                                       # calls __sponge and __layers to build the rows, sends them to all_cake_rows
         
         pass
 
-    def convert_to_string(self):                                    # returns a single string. uses the self.__all_cake_rows array, converting each row into a string and adding the row to an array. Then joining the array using '\n' as the joiner
-        pass
+    def convert_to_string(self):                                    # returns a single string. uses the self.__all_cake_rows array, converting each row into a string and adds the row to a temp array. Then joining the array using '\n' as the joiner
+        return "Working" # test
 
-    def print_cake(self, cake_string="TESTING the string"):                              # takes the return from convert_to_string as the argument. Prints the name of the cake (self.name) and the cake_string
+    def print_cake(self, cake_string):                              # takes the return from convert_to_string as the argument. Prints the name of the cake (self.name) and the cake_string
         print(self.name)
         print(cake_string)
-        pass
 
 
 
@@ -173,22 +179,24 @@ def make_cake(cake_class_name, cake_unit_width, cake_name="Unamed Cake"):
     try:
         Cake_class = globals()[cake_class_name] # turns a normal string into a class name
         cake = Cake_class(cake_unit_width, cake_name)
-        cake.print_cake()
+        cake.print_cake(cake.convert_to_string())
     except ValueError as error_message:
         print(error_message)
 
 def main():
     print()
 
-    make_cake("Fishcake", 5, "Fishie Mac Fish-face")
-    make_cake("Fishcake", 3)
-    make_cake("Fishcake", 1)
-    make_cake("Fishcake", 20, "Table-top")
+    # completed cakes
+    make_cake("Fishcake", 7, "Fishcake")
+    print() # new line
 
-    make_cake("Cake", 4, "Basic cake")
-    make_cake("Cake", 3, "Sadly small")
-    make_cake("Cake", -400, "400 Bytes")
-    make_cake("Cake", 20)
+    # --------------- testing -----------------------
+    make_cake("Cake", 20, "Basic cake")
+
+
+#make_cake("Fishcake", 7, "Fishcake") # Object class method prototype: print_cake(self) 
+#make_cake("Cake", 20, "Basic cake")  # Object class method prototype: print_cake(self, ) 
+
 
 
     # sponge_layer(unit_width, unit_height, colour, )
